@@ -87,8 +87,8 @@ stages:
         failTaskOnFailedTests: true
 
 - stage: onRelease
-  # condition: |
-  #   eq(variables['Build.SourceBranch'], 'refs/heads/releases')
+  condition: |
+    eq(variables['Build.SourceBranch'], 'refs/heads/releases')
   jobs:
   - job: onReleaseJob
     pool:
