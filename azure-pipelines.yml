@@ -30,7 +30,7 @@ stages:
 - stage: onPush
   condition: |
     and(
-      ne(variables['Build.SourceBranch'], 'refs/heads/releases'),
+      ne(variables['Build.SourceBranch'], 'refs/heads/master'),
       not(startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
     )
   jobs:
@@ -88,7 +88,7 @@ stages:
 
 - stage: onRelease
   condition: |
-    eq(variables['Build.SourceBranch'], 'refs/heads/releases')
+    eq(variables['Build.SourceBranch'], 'refs/heads/master')
   jobs:
   - job: onReleaseJob
     pool:
@@ -114,12 +114,12 @@ stages:
 
       - script: |
           set -x
-          echo "Checking out the releases branch"
+          echo "Checking out the master branch"
           curl -s -n -X GET -o /tmp/prod-repo-info.json "$DATABRICKS_HOST/api/2.0/workspace/get-status" -H "Authorization: Bearer $DATABRICKS_TOKEN" -d '{"path":"/Repos/js_staging/databricks-nutter-projects-demo"}'
           cat /tmp/prod-repo-info.json
           export STAGING_REPOS_ID=$(cat /tmp/prod-repo-info.json|grep '"object_type":"REPO"'|sed -e 's|^.*"object_id":\([0-9]*\).*$|\1|')
           curl -s -n -X PATCH -o "/tmp/releases-out.json" "$DATABRICKS_HOST/api/2.0/repos/$STAGING_REPOS_ID" \
-            -H "Authorization: Bearer $DATABRICKS_TOKEN" -d "{\"branch\": \"releases\"}"
+            -H "Authorization: Bearer $DATABRICKS_TOKEN" -d "{\"branch\": \"master\"}"
           cat "/tmp/releases-out.json"
           grep -v error_code "/tmp/releases-out.json"
         env:
