@@ -16,15 +16,7 @@ trigger:
 #      - v*.*
 #      - prod
 
-pr:
-  branches:
-    include:
-      - master
-      - releases
-  paths:
-    exclude:
-      - README.md
-      - images
+pr: none
       
 stages:
 - stage: onPush
